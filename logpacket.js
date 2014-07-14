@@ -42,12 +42,17 @@ LogPacket.parse = function(buf, secret) {
 		if (buf[i] !== 0xFF) throw new Error('invalid header value'); 
 	}
 
-	if (buf[buf.length - 2] !== 0x0a || buf[buf.length - 1] !== 0x00) {
+	if (buf[buf.length - 1] !== 0x00) {
 		throw new Error('invalid footer value');
 	}
 
 	var type = buf[4],
-	    offset = 5;
+	    offset = 5,
+	    footer = 2;
+
+	if (buf[buf.length - 2] !== 0x0a) {
+		footer = 1;
+	}
 
 	if (type === 0x53) {
 		if (typeof(secret) === 'string') {
@@ -59,7 +64,7 @@ LogPacket.parse = function(buf, secret) {
 		throw new Error('invalid packet type ' + type.toString(16));
 	}
 
-	if (offset >= (buf.length - 2)) {
+	if (offset >= (buf.length - footer)) {
 		if (typeof(secret) === 'string') {
 			throw new Error('packet too short to contain secret (invalid secret or no message)');
 		} else {
@@ -67,7 +72,7 @@ LogPacket.parse = function(buf, secret) {
 		}
 	}
 
-	var msgbuf = buf.slice(offset, buf.length - 2);
+	var msgbuf = buf.slice(offset, buf.length - footer);
 	
 	var message = msgbuf.toString();
 
