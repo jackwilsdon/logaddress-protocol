@@ -1,4 +1,4 @@
-# `logaddress` format
+# `logaddress` UDP protocol
 Offset | Data | Type | Description | Example
 -------|------|------|------------ |--------
 0 | Header | Long | Always `0xFFFFFFFF`. | `0xFFFFFFFF`
