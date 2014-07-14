@@ -56,7 +56,11 @@ LogPacket.parse = function(buf, secret) {
 	}
 
 	if (offset >= (buf.length - 2)) {
-		throw new Error('packet too short to contain secret (invalid secret?)');
+		if (typeof(secret) === 'string') {
+			throw new Error('packet too short to contain secret (invalid secret?)');
+		} else {
+			throw new Error('packet is empty');
+		}
 	}
 
 	var msgbuf = buf.slice(offset, buf.length - 2);
