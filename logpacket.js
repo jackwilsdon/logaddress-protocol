@@ -23,6 +23,10 @@ LogPacket.prototype.getMessage = function() {
 	return (typeof(this._message) === 'string') ? this._message : false;
 };
 
+LogPacket.prototype.toString = function() {
+	return "LogPacket {type: " + this.getType().toString() + ", message: \"" + this.getMessage().toString() + "\"}";
+};
+
 LogPacket.parse = function(buf, secret) {
 	if (!(buf instanceof Buffer)) {
 		throw new Error('invalid argument: buf must be a buffer');
