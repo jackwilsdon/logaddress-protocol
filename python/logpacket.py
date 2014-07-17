@@ -34,7 +34,7 @@ class LogPacket:
 		return self._message if isinstance(self._message, str) else ''
 
 	def __str__(self):
-		return "<logpacket.LogPacket ptype={0} message=\"{1}\">".format(self.ptype, self.message)
+		return '<logpacket.LogPacket ptype={0} message=\"{1}\">'.format(self.ptype, self.message)
 
 	@staticmethod
 	def parse(packet, secret = None):
@@ -50,20 +50,20 @@ class LogPacket:
 			raise Exception('packet too short (' + str(packet_len) + ' < 7)')
 
 		for i in range(4):
-			if packet[i] != 0xFF:
+			if ord(packet[i]) != 0xFF:
 				raise Exception('invalid header value')
 
-		if packet[packet_len - 1] != 0x00:
+		if ord(packet[packet_len - 1]) != 0x00:
 			raise Exception('invalid footer value')
 
-		ptype, offset, footer = packet[4], 5, 2
+		ptype, offset, footer = ord(packet[4]), 5, 2
 
-		if packet[packet_len - 2] != 0x0a:
+		if ord(packet[packet_len - 2]) != 0x0a:
 			footer = 1
 
 		if ptype == 0x53:
 			if isinstance(secret, str):
-				offset += len(bytes(secret, 'utf-8'))
+				offset += len(bytes(secret))
 			else:
 				raise Exception('missing secret for packet type 0x53')
 		elif ptype != 0x52:
@@ -75,7 +75,6 @@ class LogPacket:
 			else:
 				raise Exception('packet is empty')
 
-		message_bytes = packet[offset:(packet_len - footer)]
-		message = message_bytes.decode('utf-8')
+		message = packet[offset:(packet_len - footer)]
 
 		return LogPacket(ptype, message)
