@@ -16,17 +16,13 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function LogPacket(type, message, secret) {
+function LogPacket(type, message) {
 	if (typeof(type) !== 'number') {
 		throw new Error('invalid argument: type must be a number');
 	}
 
 	if (typeof(message) !== 'string') {
 		throw new Error('invalid argument: message must be a string');
-	}
-
-	if (typeof(secret) !== 'undefined' && typeof(secret) !== 'string') {
-		throw new Error('invalid argument: secret must be undefined or a string');
 	}
 
 	this._type = type;
