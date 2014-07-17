@@ -37,12 +37,15 @@ class LogPacket:
 		return '<logpacket.LogPacket ptype={0} message=\"{1}\">'.format(self.ptype, self.message)
 
 	@staticmethod
-	def parse(packet, secret = None):
+	def parse(packet, secret = None, strict_secret = True):
 		if not isinstance(packet, bytes):
 			raise TypeError('packet must be a bytes str')
 
 		if not isinstance(secret, (type(None), str)):
 			raise TypeError('secret must be None or a str')
+
+		if not isinstance(strict_secret, bool):
+			raise TypeError('strict_secret must be a bool')
 
 		packet_len = len(packet)
 
@@ -63,7 +66,12 @@ class LogPacket:
 
 		if ptype == 0x53:
 			if isinstance(secret, str):
-				offset += len(bytes(secret))
+				secret_len = len(bytes(secret))
+				packet_secret = packet[offset:(offset + secret_len)]
+				if secret != packet_secret and strict_secret:
+					raise Exception('secret does not match')
+
+				offset += secret_len
 			else:
 				raise Exception('missing secret for packet type 0x53')
 		elif ptype != 0x52:
